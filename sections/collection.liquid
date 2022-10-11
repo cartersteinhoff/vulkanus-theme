@@ -1,0 +1,141 @@
+<div class="flex justify-center mt-4">
+  <div class="w-11/12">
+    <h2 class="py-4 text-3xl">{{ collection.title }}</h2>
+    <form class="flex">
+      {% comment %} filter section {% endcomment %}
+      <div class="inline-flex">
+        <span class="mr-4">Filter: </span>
+        {%- for filter in collection.filters -%}
+        <details id="details" class="mr-4">
+          <summary class="flex items-center">
+            <span class="mr-0.5">{{ filter.label }}</span>
+            {% render 'dropdown' %}
+            <div>
+              {%- if filter.active_values.size > 0 -%}
+                <span>({{ filter.active_values.size }})</span>
+              {%- endif -%}
+            </div>
+          </summary>
+    
+          <div class="bg-slate-900 absolute p-2 pr-24">
+            <div class="">
+              <span class="">{{ filter.active_values.size }} selected</span>
+    
+              {%- if filter.active_values.size > 0 -%}
+                <a href="{{ filter.url_to_remove }}" class="">Reset</a>
+              {%- endif -%}
+            </div>
+    
+            {%- case filter.type -%}
+              {%- when 'boolean' or 'list' -%}
+                <ul class="">
+                  {%- for filter_value in filter.values -%}
+                    <li class="">
+                      <label for="Filter-{{ filter.param_name }}-{{ forloop.index }}">
+                      <input type="checkbox"
+                        name="{{ filter_value.param_name }}"
+                        value="{{ filter_value.value }}"
+                        id="Filter-{{ filter.param_name }}-{{ forloop.index }}"
+                        {% if filter_value.active -%}checked{%- endif %}
+                        {% if filter_value.count == 0 and filter_value.active == false -%}disabled{%- endif %}
+                      >{{ filter_value.label }}</label>
+                    </li>
+                  {%- endfor -%}
+                </ul>
+    
+                <div class="">
+                  <input type="submit" value="Apply">
+                </div>
+              {%- when 'price_range' -%}
+                <div class="">
+                  <div class="">
+                    <span>{{ cart.currency.symbol }}</span>
+    
+                    <input name="{{ filter.min_value.param_name }}"
+                      id="Filter-{{ filter.min_value.param_name }}"
+                      {% if filter.min_value.value -%}
+                        value="{{ filter.min_value.value | money_without_currency | replace: ',', '' }}"
+                      {%- endif %}
+                      type="number"
+                      placeholder="0"
+                      min="0"
+                      max="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
+                    >
+    
+                    <label for="Filter-{{ filter.min_value.param_name }}">From</label>
+                  </div>
+                  <div class="">
+                    <span>{{ cart.currency.symbol }}</span>
+    
+                    <input name="{{ filter.max_value.param_name }}"
+                      id="Filter-{{ filter.max_value.param_name }}"
+                      {% if filter.max_value.value -%}
+                        value="{{ filter.max_value.value | money_without_currency | replace: ',', '' }}"
+                      {%- endif %}
+                      type="number"
+                      placeholder="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
+                      min="0"
+                      max="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
+                    >
+    
+                    <label for="Filter-{{ filter.max_value.param_name }}">To</label>
+                  </div>
+                </div>
+    
+                <div class="">
+                  <input type="submit" value="Apply">
+                </div>
+            {%- endcase -%}
+          </div>
+        </details>
+        {%- endfor -%}  
+      </div>
+      {% comment %} sort section {% endcomment %}
+      <select id="sort-by">
+        {% assign sort_by = collection.sort_by | default: collection.default_sort_by %}
+
+        {% for option in collection.sort_options %}
+          <option value="{{ option.value }}" {% if option.value == sort_by %} selected="selected" {% endif %}>
+            {{ option.name }}
+          </option>
+        {% endfor %}
+      </select>
+
+      <span class="ml-auto">{{ collection.products_count }} Products</span>
+      <div class="">
+        {%- for filter in collection.filters -%}
+          {% if filter.active_values.size > 0 %}
+            <a href="{{ collection.url }}?sort_by={{ collection.sort_by }}" class="">Clear all</a>
+          {% endif %}
+          {%- if filter.type == "price_range" -%}
+            {%- if filter.min_value.value != nil or filter.max_value.value != nil -%}
+              <a class="" href="{{ filter.url_to_remove }}">
+                {%- assign min_value = filter.min_value.value | default: 0 -%}
+                {%- assign max_value = filter.max_value.value | default: filter.range_max -%}
+                {{ min_value | money }} - {{ max_value | money }} X
+              </a>
+            {%- endif -%}
+          {%- else -%}
+            {%- for filter_value in filter.active_values -%}
+              <a class="" href="{{ filter_value.url_to_remove }}">
+                {{ filter.label }}: {{ filter_value.label }} X
+              </a>
+            {%- endfor -%}
+          {%- endif- %}
+        {%- endfor -%}
+      </div>
+    </form>
+    <div class="flex flex-wrap justify-center md:justify-between gap-x-1">
+    {% for product in collection.products %}
+      {% if product.featured_image %}
+        <div class="py-5">
+          {% comment %} update width and height to 400 for mobile {% endcomment %}
+          {{ product | image_url: width: 350, height: 350 | image_tag | link_to: product.url }}
+          <p class="py-2">{{ product.title | link_to: product.url }}</p>
+          <p class="text-xl text-amber-400">{{ product.price | money_without_trailing_zeros }}</p>
+        </div>
+      {% endif %}
+    {% endfor %}
+    </div>
+  </div>
+</div>

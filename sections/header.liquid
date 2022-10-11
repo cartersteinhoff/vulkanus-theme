@@ -1,0 +1,35 @@
+<header class="bg-slate-900 text-neutral-100">
+  <div class="flex justify-center">
+    <div class="relative flex justify-between py-3 w-11/12">
+      <div class="md:hidden w-5" id="mobile-button">
+        {% render 'MobileHamburgerMajor' %}
+      </div>
+      <img src="{{ 'logo.png' | asset_img_url: '1400x' }}" alt="Dusk Herbs" width="100">
+      <nav
+        class="
+          hidden h-screen w-full fixed top-0 left-0 flex flex-col bg-black text-white
+          md:relative md:flex md:flex-row md:h-auto md:w-auto md:bg-slate-900 md:text-neutral-100
+        "
+        id="mobile-menu"
+      >
+        {% for link in linklists['main-menu'].links %}
+          <a href="{{ link.url }}" class="inline-block p-3 md:pr-5 md:py-0">
+            <div class="flex">
+              {{ link.title }}
+              {% if link.links != blank %}
+                {% render 'icon-dropdown' %}
+              {% endif %}
+            </div>
+          </a>
+          {% for childlink in link.links %}
+            <a href="{{ childlink.url }}">{{ childlink.title }}</a>
+          {% endfor %}
+        {% endfor %}
+        <div class="w-5 fixed top-2 right-3 md:hidden" id="mobile-cancel">
+          {% render 'MobileCancelMajor' %}
+        </div>
+      </nav>
+      <div class="w-5">{% render 'CartMajor' %}</div>
+    </div>
+  </div>
+</header>

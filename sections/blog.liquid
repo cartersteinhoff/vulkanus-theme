@@ -1,0 +1,4 @@
+<p>This is the blog section.</p>
+{% for article in blogs %}
+  {{ article.title | link_to: article.url }}
+{% endfor %}

@@ -1,0 +1,20 @@
+<p>This is the cart section.</p>
+{{ section.settings.cart.title }}
+<div class="flex flex-col items-center">
+  <form action="{{ routes.cart_url }}" method="post">
+    {% for item in cart.items %}
+      <section class="flex">
+        <div class="p-6">{{ item | image_url: width: 200 | image_tag }}</div>
+        <div class="flex flex-col p-6">
+          <h5 class="mb-1">{{ item.title }}</h5>
+          <h5 class="mb-3">{{ item.price | money }}</h5>
+          <div class="flex">
+            <input class="text-black w-1/6 mr-3" type="text" name="updates[]" value="{{ item.quantity }}">
+            <a class="underline" href="{{ item.url_to_remove }}">Remove</a>
+          </div>
+        </div>
+      </section>
+    {% endfor %}
+    <input class="block bg-black border rounded-full w-1/6 m-6 " type="submit" name="checkout" value="Checkout">
+  </form>
+</div>

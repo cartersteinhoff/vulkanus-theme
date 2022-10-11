@@ -1,0 +1,80 @@
+<section class="flex justify-center m-4">
+  <div x-data="
+      {
+        addToCart() {
+          let formData = new FormData($refs.product_form);
+
+          fetch(window.Shopify.routes.root + 'cart/add.js', {
+            method: 'POST',
+            body: formData
+          })
+          .then(response => {
+            return response.json();
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+          });
+        }
+      }
+    ">
+    {% form 'product', product, x-ref: 'product_form' %}
+      {{ product | image_url: width: 350, height: 350 | image_tag }}
+      <section>
+        <h2 class="text-3xl py-2">{{ product.title }}</h2>
+      {% comment %}
+         {% if product.available %}
+          <h5>In Stock!</h5>
+        {% endif %}
+      {% endcomment %}
+      {% comment %}
+         {% if product.variants %}
+          <h3 class="text-2xl my-2">{{ variant.price | money }}</h3>
+        {% else %}
+        {% endif %}
+      {% endcomment %}
+      <h3 class="text-xl my-2">{{ product.price | money }}</h3>
+
+      {{ product.compare_at_price | money }}
+      {% if product.available %}
+        <div class="flex flex-col border border-solid my-2">
+          <h4>Select Size:</h4>
+          <select class="text-black p-2" name="id" id="id">
+            {% for variant in product.variants %}
+              <option
+                value="{{ variant.id }}"
+                {% if variant == product.selected_or_first_available_variant %}
+                  selected="selected"
+                {% endif %}
+              >
+                {{ variant.title }}
+              </option>
+            {% endfor %}
+          </select>
+          <button class="border rounded-full bg-black p-2 my-4" type="button" name="add" @click="addToCart()">
+            Add to Cart
+          </button>
+          <label for="quantity">Quantity</label>
+          <div>
+            <button id="decrease">-</button>
+            <input class="text-black w-1/4 p-2" type="text" name="quantity" id="quant" min="1" value="1">
+            <button id="increase">+</button>
+          </div>
+
+          {% comment %}
+             <label for="properties">Properties</label>
+            <input class="text-black" type="text" name="properties[Monogram]" id="properites">
+          {% endcomment %}
+          {{ form | payment_button }}
+          {% else %}
+        <h5>Out of Stock!</h5>
+      {% endif %}
+
+      <p class="my-4">{{ product.description }}</p>
+      </section>
+      
+      </div>
+    {% endform %}
+  </div>
+</section>
+
+

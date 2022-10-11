@@ -1,0 +1,9 @@
+<p class="text-center mt-3">The collections are eruptions from Vulkanus</p>
+<section class="flex flex-wrap flex-col md:flex-row justify-around my-3">
+  {% for collection in collections %}
+    <div class="flex flex-col">
+      <h3 class="text-center pb-2">{{ collection.title | link_to: collection.url }}</h3>
+      {{ collection.featured_image | image_url: width: 100 | image_tag | link_to: collection.url }}
+    </div>
+  {% endfor %}
+</section>

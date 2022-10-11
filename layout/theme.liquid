@@ -1,0 +1,29 @@
+<!doctype html>
+<html class="no-js" lang="{{ request.locale.iso_code }}">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <title>
+      {{ page_title }}
+    </title>
+
+    {{ content_for_header }}
+
+    <script>
+      document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
+    </script>
+
+    <link rel="stylesheet" href="{{ 'output.css' | asset_url }}">
+    <link rel="stylesheet" href="../assets/main.css">
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="{{ 'application.js' | asset_url }}" defer></script>
+  </head>
+
+  <body>
+    {% section 'header' %}
+
+    {{ content_for_layout }}
+  </body>
+</html>
