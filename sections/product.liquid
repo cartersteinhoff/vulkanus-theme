@@ -18,7 +18,7 @@
       }
     ">
     {% form 'product', product, x-ref: 'product_form' %}
-      {{ product | image_url: width: 350, height: 500 | image_tag }}
+      {{ product | image_url: width: 350, height: 500 | image_tag: width: 300 }}
       <section>
         <h2 class="text-3xl py-2">{{ product.title }}</h2>
       {% comment %}
